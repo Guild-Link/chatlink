@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 
-	"github.com/chickeniq/chatlink/pkg/proto"
+	"github.com/guild-link/chatlink/pkg/proto"
 )
 
 func (s *Socket) handlePacket(p *proto.Packet) error {

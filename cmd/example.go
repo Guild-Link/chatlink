@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/chickeniq/chatlink/pkg/proto"
-	"github.com/chickeniq/chatlink/pkg/socket"
+	"github.com/guild-link/chatlink/pkg/proto"
+	"github.com/guild-link/chatlink/pkg/socket"
 )
 
 func handleBotInfo(bots []proto.BotInfo) {

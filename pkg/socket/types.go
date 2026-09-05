@@ -5,7 +5,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/chickeniq/chatlink/pkg/proto"
+	"github.com/guild-link/chatlink/pkg/proto"
 )
 
 type Socket struct {

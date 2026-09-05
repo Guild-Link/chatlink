@@ -9,7 +9,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/chickeniq/chatlink/pkg/proto"
+	"github.com/guild-link/chatlink/pkg/proto"
 )
 
 func NewSocket(opts ...Option) (*Socket, error) {

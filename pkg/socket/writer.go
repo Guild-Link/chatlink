@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/chickeniq/chatlink/pkg/proto"
+	"github.com/guild-link/chatlink/pkg/proto"
 )
 
 func (s *Socket) SendPacket(message *proto.Packet) error {
