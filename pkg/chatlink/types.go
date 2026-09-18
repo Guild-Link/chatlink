@@ -43,16 +43,21 @@ const (
 
 var broadcast = valkey.NewLuaScript(`
 local clients = redis.call('HGETALL', KEYS[1])
+local sent = 0
+
 for i = 1, #clients, 2 do
-	local uuid = clients[i]
 	local bot = cjson.decode(clients[i + 1])
+	local uuid = clients[i]
 
 	if uuid ~= ARGV[2] and bot.enabled == true then
 		local stream = ARGV[3] .. uuid
 		redis.call('XADD', stream, 'MAXLEN', '=', 100, '*', 'message', ARGV[1])
 		redis.call('EXPIRE', stream, 120)
+		sent = sent + 1
 	end
 end
+
+return sent
 `)
 
 var send = valkey.NewLuaScript(`
