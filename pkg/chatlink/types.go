@@ -63,6 +63,7 @@ return sent
 var send = valkey.NewLuaScript(`
 redis.call('XADD', KEYS[1], 'MAXLEN', '=', 100, '*', 'message', ARGV[1])
 redis.call('EXPIRE', KEYS[1], 120)
+return 1
 `)
 
 var update = valkey.NewLuaScript(`
@@ -72,5 +73,6 @@ if not raw then return 0 end
 local bot = cjson.decode(raw)
 bot[ARGV[2]] = cjson.decode(ARGV[3])
 redis.call('HSET', KEYS[1], ARGV[1], cjson.encode(bot))
+
 return 1
 `)
