@@ -5,7 +5,7 @@ import (
 	"slices"
 	"strconv"
 
-	"github.com/chickeniq/chatlink/auth"
+	"github.com/guild-link/chatlink/auth"
 
 	"github.com/valkey-io/valkey-go"
 )
