@@ -29,6 +29,7 @@ var errorExprs = []*regexp.Regexp{
 	regexp.MustCompile(`^You cannot `),
 	regexp.MustCompile(`^You can only `),
 	regexp.MustCompile(` is (?:not|already) in (?:your|another) guild!$`),
+	regexp.MustCompile(`^Already in a guild!$`),
 	regexp.MustCompile(`^Your guild is full`),
 }
 
