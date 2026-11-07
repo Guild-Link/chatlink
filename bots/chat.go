@@ -18,6 +18,51 @@ func (c *Client) Send(ctx context.Context, uuid, message string, where Tags) err
 	return sendScript.Exec(ctx, c.valkey, nil, withTags([]string{uuid, message}, where)).Error()
 }
 
+func (c *Client) Request(ctx context.Context, uuid, message string, where Tags, read func(line string) (bool, error)) error {
+	key := "bots:" + uuid + ":outbox"
+	entries, err := c.valkey.Do(ctx, c.valkey.B().Xrevrange().Key(key).End("+").Start("-").Count(1).Build()).AsXRange()
+	if err != nil {
+		return err
+	}
+
+	last := "0-0"
+	if len(entries) > 0 {
+		last = entries[0].ID
+	}
+
+	if err := c.Send(ctx, uuid, message, where); err != nil {
+		return err
+	}
+
+	for {
+		streams, err := c.valkey.Do(ctx, c.valkey.B().Xread().Count(100).Block(5000).Streams().Key(key).Id(last).Build()).AsXRead()
+		if ctx.Err() != nil {
+			return ctx.Err()
+		}
+
+		if valkey.IsValkeyNil(err) {
+			continue
+		}
+
+		if err != nil {
+			return err
+		}
+
+		for _, entry := range streams[key] {
+			last = entry.ID
+			if line := entry.FieldValues["message"]; line != "" {
+				if done, err := read(line); done || err != nil {
+					return err
+				}
+			}
+		}
+	}
+}
+
+func StripColors(line string) string {
+	return colorExpr.ReplaceAllString(line, "")
+}
+
 func (c *Client) Broadcast(ctx context.Context, message, exclude string) error {
 	if message == "" {
 		return fmt.Errorf("message is required")
