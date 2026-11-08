@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func ChatCommands(channel Channel, sender, content string, maxCommands int) []string {
+func (c *Client) ChatCommands(channel Channel, sender, content string) []string {
 	prefix := "/" + string(channel) + " "
 	if sender != "" {
 		prefix += sender + ": "
@@ -17,7 +17,7 @@ func ChatCommands(channel Channel, sender, content string, maxCommands int) []st
 	var commands []string
 	for line := range strings.SplitSeq(content, "\n") {
 		for chunk := range slices.Chunk([]rune(strings.Join(strings.Fields(line), " ")), maxLength-len(head)) {
-			if len(commands) == maxCommands {
+			if len(commands) == c.maxCommands {
 				return commands
 			}
 

@@ -1,6 +1,11 @@
 package hypixel
 
-import "github.com/guild-link/chatlink/bots"
+import (
+	"sync"
+	"time"
+
+	"github.com/guild-link/chatlink/bots"
+)
 
 const (
 	maxLength   = 256
@@ -11,6 +16,7 @@ type Kind int
 
 const (
 	Chat Kind = iota + 1
+	Invited
 	JoinRequest
 	Joined
 	Left
@@ -19,6 +25,10 @@ const (
 	Demoted
 	Muted
 	Unmuted
+	ChatMuted
+	ChatUnmuted
+	ThrottleEnabled
+	ThrottleDisabled
 )
 
 type Channel string
@@ -45,12 +55,16 @@ const (
 type Handler func(bot *bots.Bot, event Event)
 
 type Client struct {
-	bots *bots.Client
+	timeout     time.Duration
+	maxCommands int
+	bots        *bots.Client
+	locks       sync.Map
 }
 
 type Event struct {
 	Kind     Kind
 	Channel  Channel
+	Text     string
 	Player   string
 	Message  string
 	By       string
