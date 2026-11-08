@@ -28,11 +28,11 @@ var actions = map[Action]struct {
 	},
 	Mute: {
 		replies: []Kind{Muted, ChatMuted},
-		errors:  templates("{player} is not in your guild!", "You cannot mute someone for less than a minute"),
+		errors:  templates("You cannot mute a guild member with a higher guild rank!", "You cannot mute someone for less than a minute"),
 	},
 	Unmute: {
 		replies: []Kind{Unmuted, ChatUnmuted},
-		errors:  templates("{player} is not in your guild!", "This player is not muted!"),
+		errors:  templates("This player is not muted!"),
 	},
 	Promote: {
 		replies: []Kind{Promoted},
@@ -44,7 +44,7 @@ var actions = map[Action]struct {
 	},
 	Kick: {
 		replies: []Kind{Kicked},
-		errors:  templates("{player} is not in your guild!"),
+		errors:  templates("You do not have permission to kick people from the guild!"),
 	},
 	SetRank: {
 		replies: []Kind{Promoted, Demoted},
@@ -57,6 +57,7 @@ var nameExpr = regexp.MustCompile(`^\w{1,16}$`)
 var commonErrors = templates(
 	"You must be the Guild Master to use that command!",
 	"Can't find a player by the name of '{player}'",
+	"{player} is not in your guild!",
 	"Invalid usage! {usage}",
 )
 
