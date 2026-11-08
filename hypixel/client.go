@@ -66,9 +66,12 @@ func New(bots *bots.Client, timeout time.Duration, maxCommands int) *Client {
 
 func (c *Client) Listen(ctx context.Context, group string, handler Handler) {
 	c.bots.OnMessage(ctx, group, func(bot *bots.Bot, message string) {
-		if event, ok := parse(message); ok {
-			handler(bot, event)
+		event, ok := parse(message)
+		if !ok || event.Kind == Chat && c.isBot(ctx, event.Player) {
+			return
 		}
+
+		handler(bot, event)
 	})
 }
 
@@ -113,6 +116,11 @@ func (c *Client) request(ctx context.Context, uuid string, where bots.Tags, comm
 	}
 
 	return err
+}
+
+func (c *Client) isBot(ctx context.Context, player string) bool {
+	list, err := c.bots.Find(ctx, nil)
+	return err != nil || slices.ContainsFunc(list, func(b bots.Bot) bool { return strings.EqualFold(b.Username, player) })
 }
 
 func matches(exprs []*regexp.Regexp, line, player string) bool {
